@@ -1,3 +1,6 @@
+
+
+
 let count = 0;
 const imp = ['default', 'important', 'so-so']
 document.querySelector('.button-importance').addEventListener('click', ({target}) => {
@@ -14,3 +17,5 @@ document.querySelector('.button-importance').addEventListener('click', ({target}
     }
   }
 })
+
+
