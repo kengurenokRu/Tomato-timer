@@ -5,8 +5,9 @@ export class Task {
         this.counter = counter;
     }
 
-    setCounter (newCounter) {
-        this.counter = newCounter;
+    setCounter (/*newCounter*/) {
+       // this.counter = newCounter;
+       this.counter++;
     }
 
     setName (newName) {

@@ -5,7 +5,7 @@ import './scss/index.scss';
 
 const task = new Task('заправить кровать');
 console.log(task);
-task.setCounter(55);
+task.setCounter(/*55*/);
 console.log(task);
 task.setName('оплатить курсы');
 console.log(task);
