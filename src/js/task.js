@@ -1,6 +1,9 @@
 export class Task {
     #id;
     constructor(name, counter = 0) {
+        console.log(name);
+        console.log(counter);
+
         this.#id = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
         this.name = name;
         this.counter = counter;
@@ -11,11 +14,11 @@ export class Task {
     }
 
     getCounter() {
-        this.counter;
+        return this.counter;
     }
 
     getId() {
-        this.#id;
+        return this.#id;
     }
 
     setName(newName) {

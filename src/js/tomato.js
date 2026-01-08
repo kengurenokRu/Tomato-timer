@@ -26,7 +26,7 @@ export class Tomato {
         return this.#bigPause;
     }
     getTasks() {
-        return this.#tasks;
+        return JSON.stringify(this.#tasks);
     }
 
     addTask(task) {
@@ -37,27 +37,40 @@ export class Tomato {
         this.#activeTask = id;
     }
 
+    findTask(id) {
+        for (let i = 0; i < this.#tasks.length; i++)
+            if (this.#tasks[i].getId() == id) return this.#tasks[i];
+        return null;
+    }
+
     start() {
-        try {
+        if (this.#activeTask) {
             const timerId = setTimeout(() => {
+                clearTimeout(timerId);
                 console.log('Таймер задачи завершен');
                 this.increaseСounter(this.#activeTask);
-                const task = this.#tasks.findIndex(item => item.id == this.#activeTask);
-                if (task.getCounter() % 3 === 0)
-                    setTimeout(() => {
+                const task = this.findTask(this.#activeTask);
+                console.log(task);
+                if (task.getCounter() % 3 === 0) {
+                    const bigTimerId = setTimeout(() => {
                         console.log('Большой таймер отдыха');
-                    }, this.tasks.bigPause * 1000);
-                else setTimeout(() => {
-                    console.log('Маленький таймер отдыха');
-                }, this.tasks.pause * 1000);
-            }, this.#time*1000);
+                        clearTimeout(bigTimerId);
+                    }, this.#tasks.bigPause * 1000);
+                }
+                else {
+                    const miniTimerId = setTimeout(() => {
+                        console.log('Маленький таймер отдыха');
+                        clearTimeout(miniTimerId);
+                    }, this.#tasks.pause * 1000);
+                }
+            }, this.#time * 1000);
         }
-        catch {
+        else {
             console.error("Нет активной задачи");
         }
     }
 
     increaseСounter(id) {
-        this.#tasks.findIndex(item => item.id == id).setCounter();
+        this.findTask(id).setCounter();
     }
 }
