@@ -1,4 +1,4 @@
-class Tomato {
+export class Tomato {
     #time = 25;
     #activeTask = null;
     #pause = 5;
@@ -16,16 +16,16 @@ class Tomato {
             this.#tasks = fields.tasks;
     }
 
-    get time() {
+    getTime() {
         return this.#time;
     }
-    get pause() {
+    getPause() {
         return this.#pause;
     }
-    get bigPause() {
+    getBigPause() {
         return this.#bigPause;
     }
-    get tasks() {
+    getTasks() {
         return this.#tasks;
     }
 
@@ -41,8 +41,8 @@ class Tomato {
         try {
             const timerId = setTimeout(() => {
                 console.log('Таймер задачи завершен');
-                increaseСounter(this.#activeTask);
-                const task = tasks.findIndex(item => item.id == this.#activeTask);
+                this.increaseСounter(this.#activeTask);
+                const task = this.#tasks.findIndex(item => item.id == this.#activeTask);
                 if (task.getCounter() % 3 === 0)
                     setTimeout(() => {
                         console.log('Большой таймер отдыха');
@@ -50,7 +50,7 @@ class Tomato {
                 else setTimeout(() => {
                     console.log('Маленький таймер отдыха');
                 }, this.tasks.pause * 1000);
-            }, 25000);
+            }, this.#time*1000);
         }
         catch {
             console.error("Нет активной задачи");
@@ -58,6 +58,6 @@ class Tomato {
     }
 
     increaseСounter(id) {
-        tasks.findIndex(item => item.id == id).setCounter();
+        this.#tasks.findIndex(item => item.id == id).setCounter();
     }
 }
