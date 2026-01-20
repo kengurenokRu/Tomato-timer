@@ -1,4 +1,7 @@
-export class Tomato {
+export const Tomato = (() => {
+    let _instance;
+    
+    class Tomato {
     #time = 25;
     #activeTask = null;
     #pause = 5;
@@ -6,6 +9,8 @@ export class Tomato {
     #tasks = [];
 
     constructor(fields) {
+        if (_instance) return _instance;
+        _instance = this;
         if ('time' in fields)
             this.#time = fields.time;
         if ('pause' in fields)
@@ -74,3 +79,5 @@ export class Tomato {
         this.findTask(id).setCounter();
     }
 }
+return Tomato;
+})();
