@@ -1,27 +1,61 @@
-export class Task {
+class Task {
     #id;
-    constructor(name, counter = 0) {
-        console.log(name);
-        console.log(counter);
-
+    constructor(text, count = 0) {
+        const proto = Object.getPrototypeOf(this);
+        if (proto.constructor === Task) {
+            throw new Error('Abstract class');
+        }
         this.#id = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
-        this.name = name;
-        this.counter = counter;
+        this.text = text;
+        this.count = count;
     }
 
     setCounter() {
-        this.counter++;
+        this.count++;
     }
 
-    getCounter() {
-        return this.counter;
+    getCount() {
+        return this.count;
     }
 
     getId() {
         return this.#id;
     }
 
-    setName(newName) {
-        this.name = newName;
+    setText(newText) {
+        this.text = newText;
     }
 }
+
+export class ImportantTask extends Task {
+    importance = 'important';
+    constructor(text, count = 0) {
+        super(text, count);
+    }
+
+    getImportance() {
+        return this.importance;
+    }
+};
+
+export class StandardTask extends Task {
+    importance = 'standard';
+    constructor(text, count = 0) {
+        super(text, count);
+    }
+
+    getImportance() {
+        return this.importance;
+    }
+};
+
+export class UnimportantTask extends Task {
+    importance = 'unimportant';
+    constructor(text, count = 0) {
+        super(text, count);
+    }
+
+    getImportance() {
+        return this.importance;
+    }
+};
