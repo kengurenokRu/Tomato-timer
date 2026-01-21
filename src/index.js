@@ -1,6 +1,6 @@
 import './js/main.js';
 
-import { Tomato } from "./js/tomato";
+
 
 import './scss/index.scss';
 
@@ -24,3 +24,4 @@ import './scss/index.scss';
   console.log(`Время выполнения: ${tomato2.getTime()}`);
   console.log(`Большая пауза: ${tomato2.getBigPause()}`);
   console.log(`Маленькая пауза: ${tomato2.getPause()}`);*/
+

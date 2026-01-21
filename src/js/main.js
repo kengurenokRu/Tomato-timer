@@ -1,8 +1,13 @@
+import { RenderTomato } from "./renderTomato";
 
 import { ImportantTask, StandardTask, UnimportantTask } from "./task";
 
 const tasks = [];
 
+
+const renderTomato = new RenderTomato(document.getElementById('main')/*, controllerTomato*/);
+renderTomato.render();
+/*
 let count = 0;
 const imp = ['default', 'important', 'so-so']
 document.querySelector('.button-importance').addEventListener('click', ({ target }) => {
@@ -39,4 +44,4 @@ form.addEventListener('submit', (event) => {
   form.reset();
   console.log(tasks);
 });
-
+*/
