@@ -3,9 +3,9 @@ import { ImportantTask, StandardTask, UnimportantTask } from "./task";
 
 export class RenderTomato {
   #tasks = [];
-  constructor(root/*, controller*/) {
+  constructor(root, controller) {
     this.root = root;
-    // this.controller = controller;
+    this.controller = controller;
     this.count = 0;
     this.mainContainer = el('div.container', { class: 'main__container' });
 
@@ -135,8 +135,7 @@ export class RenderTomato {
 }
 
 
-//this.tomato = new Tomato();
-//this.controllerTomato = new ControllerTomato(tomato);
+
 
 //this.renderTomato = new RenderTomato(document.getElementById('main')/*, controllerTomato*/);
 //renderTomato.render();
