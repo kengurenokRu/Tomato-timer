@@ -1,93 +1,132 @@
 import { el, setChildren, mount } from "redom";
+import { ImportantTask, StandardTask, UnimportantTask } from "./task";
 
 export class RenderTomato {
-
+  #tasks = [];
   constructor(root/*, controller*/) {
     this.root = root;
-   // this.controller = controller;
-
+    // this.controller = controller;
+    this.count = 0;
     this.mainContainer = el('div.container', { class: 'main__container' });
 
-    const window = el('div.pomodoro-form', { class: 'window' });
+    this.window = el('div.pomodoro-form', { class: 'window' });
 
-    const windowPanel = el('.window__panel');
-    const windowPanelTitle = el('p.window__panel-title', 'Сверстать сайт');
-    const windowPanelTaskText = el('p.window__panel-task-text', 'Томат 2');
-    setChildren(windowPanel, [windowPanelTitle, windowPanelTaskText]);
-    
-    const windowBody = el('.window__body');
-    const windowTimerText = el('p.window__timer-text', '25:00');
-    const windowButtons = el('.window__buttons');
-    const buttonPrimary = el('button.button', { class: 'button-primary' });
-    const buttonSecondary = el('button.button', { class: ['button-secondary', 'hidden'] });
-    setChildren(windowButtons, [buttonPrimary, buttonSecondary]);
-    setChildren(windowBody, [windowTimerText, windowButtons]);
+    this.windowPanel = el('.window__panel');
+    this.windowPanelTitle = el('p.window__panel-title', 'Сверстать сайт');
+    this.windowPanelTaskText = el('p.window__panel-task-text', 'Томат 2');
+    setChildren(this.windowPanel, [this.windowPanelTitle, this.windowPanelTaskText]);
 
-    const taskForm = el('form.task-form', { action: 'submit' });
-    const inputPrimary = el('input', { type: 'text', class: ['task-name', 'input-primary'], name: 'task-name', id: 'task-name', placeholder: 'название задачи' });
-    const buttonDefault = el('button', { type: 'button', class: ['button', 'button-importance', 'default'], ariaLabel: 'Указать важность' });
-    const buttonSubmit = el('button', { type: 'submit', class: ['button', 'button-primary', 'task-form__add-button']}, 'Добавить');
-    setChildren(taskForm, [inputPrimary, buttonDefault, buttonSubmit]);
+    this.windowBody = el('.window__body');
+    this.windowTimerText = el('p.window__timer-text', '25:00');
+    this.windowButtons = el('.window__buttons');
+    this.buttonPrimary = el('button.button', { class: 'button-primary' }, 'Старт');
+    this.buttonSecondary = el('button');
+    this.buttonSecondary.className = 'button button-secondary hidden';
+    setChildren(this.windowButtons, [this.buttonPrimary, this.buttonSecondary]);
+    setChildren(this.windowBody, [this.windowTimerText, this.windowButtons]);
 
-    setChildren(window, [windowPanel, windowBody, taskForm]);
+    this.taskForm = el('form.task-form', { action: 'submit' });
+    this.inputPrimary = el('input', { type: 'text', name: 'task-name', id: 'task-name', placeholder: 'название задачи' });
+    this.inputPrimary.className = 'task-name input-primary';
+    this.buttonDefault = el('button', { type: 'button', ariaLabel: 'Указать важность' });
+    this.buttonDefault.className = 'button button-importance default';
+    this.buttonSubmit = el('button', { type: 'submit' }, 'Добавить');
+    this.buttonSubmit.className = 'button button-primary task-form__add-button';
+    setChildren(this.taskForm, [this.inputPrimary, this.buttonDefault, this.buttonSubmit]);
 
-   // setChildren(this.mainContainer, [window, windowBody, taskForm]);
+    setChildren(this.window, [this.windowPanel, this.windowBody, this.taskForm]);
+
+    this.pomodoroTasks = el('.pomodoro-tasks');
+
+    this.tasks = el('.tasks');
+    this.tasksTitle = el('p.tasks__title', 'Задачи:');
+    this.tasksList = el('ul.tasks__list');
+    setChildren(this.tasksList, [this.addTasksItem('tasks__item important', '1', 'Сверстать сайт'),
+    this.addTasksItem('tasks__item so-so', '1', 'Оплатить налоги'),
+    this.addTasksItem('tasks__item default', '3', 'Проверить валидность')]);
+    this.tasksDeadline = el('p.tasks__deadline', '1\u00A0час 30\u00A0мин');
+    setChildren(this.tasks, this.tasksTitle, this.tasksList, this.tasksDeadline);
 
 
-    const pomodoroTasks = el('.pomodoro-tasks');
+    this.manual = el('.manual');
+    this.manualDetails = el('details.manual__details');
+    this.tasksHeaderTitle = el('summary', 'Инструкция');
+    this.tasksHeaderTitle.className = 'manual__details manual__title tasks__header-title';
+    this.manualList = el('ol.manual__list');
+    setChildren(this.manualList, [el('li.manual__item', 'Напишите название задачи чтобы её\u00A0добавить'),
+    el('li.manual__item', 'Для активации задачи, выберите её\u00A0из\u00A0списка'),
+    el('li.manual__item', 'Запустите таймер'),
+    el('li.manual__item', 'Работайте пока таймер не\u00A0прозвонит'),
+    el('li.manual__item', 'Работайте пока таймер не\u00A0прозвонит'),
+    el('li.manual__item', 'Продолжайте работать, пока задача не\u00A0будет выполнена.'),
+    el('li.manual__item', 'Каждые 4\u00A0периода таймера делайте длинный перерыв (15-20\u00A0минут).')]);
 
-    const tasks = el('.tasks');
-    const tasksTitle = el('p.tasks__title', 'Задачи:');
-    const tasksList = el('ul.tasks__list');
-    setChildren(tasksList, [this.addTasksItem(['tasks__item', 'important'], '1', 'Сверстать сайт'),
-    this.addTasksItem(['tasks__item','so-so'], '1', 'Оплатить налоги'),
-    this.addTasksItem(['tasks__item','default'], '3', 'Проверить валидность')]);
-    const tasksDeadline = el('p.tasks__deadline', '1&nbsp;час 30&nbsp;мин');
-    setChildren(tasks, tasksTitle, tasksDeadline);
+    setChildren(this.manualDetails, [this.tasksHeaderTitle, this.manualList]);
+    setChildren(this.manual, this.manualDetails);
 
+    setChildren(this.pomodoroTasks, [this.tasks, this.manual]);
 
-    const manual = el('.manual');
-    const manualDetails = el('details.manual__details');
-    const tasksHeaderTitle = el('summary.manual__details', {class: ['manual__title','tasks__header-title']}, 'Инструкция');
-    const manualList = el('ol.manual__list');
-    setChildren(manualList, [this.addManualItem('Напишите название задачи чтобы её&nbsp;добавить'),
-    this.addManualItem('Для активации задачи, выберите её&nbsp;из&nbsp;списка'),
-    this.addManualItem('Запустите таймер'),
-    this.addManualItem('Работайте пока таймер не&nbsp;прозвонит'),
-    this.addManualItem('Работайте пока таймер не&nbsp;прозвонит'),
-    this.addManualItem('Продолжайте работать, пока задача не&nbsp;будет выполнена.'),
-    this.addManualItem('Каждые 4&nbsp;периода таймера делайте длинный перерыв (15-20&nbsp;минут).')]);
-    
-    setChildren(manualDetails, [tasksHeaderTitle,manualList]);
-    setChildren(manual, manualDetails);
-    
-    setChildren(pomodoroTasks, [tasks, manual]);
+    setChildren(this.mainContainer, [this.window, this.pomodoroTasks]);
 
-    setChildren(this.mainContainer, [window, pomodoroTasks]);
-
-   // this.bindListeners();
+    this.bindListeners();
   }
 
-addManualItem(text)
-{
-  return el('li.manual__item', text);
-}
-
   addTasksItem(classList, count, text) {
-    const tasksItem = el('li', { class: classList });
-    const countNumber = el('span.count-number', count);
-    const button = el('button', { type: 'button', class: ['tasks__text','tasks__text_active'] }, text);
-    const taskBbutton = el('button.tasks__button', { type: 'button' });
-    setChildren(tasksItem, [countNumber, button, taskBbutton, this.addPopup()]);    
-    return tasksItem;
+    this.tasksItem = el('li');
+    this.tasksItem.className = classList;
+    this.countNumber = el('span.count-number', count);
+    this.button = el('button', { type: 'button' }, text);
+    this.button.className = 'tasks__text tasks__text_active';
+    this.taskBbutton = el('button.tasks__button', { type: 'button' });
+    setChildren(this.tasksItem, [this.countNumber, this.button, this.taskBbutton/*, this.addPopup()*/]);
+    return this.tasksItem;
   }
 
   addPopup() {
-    const popup = el('div', { class: ['popup','popup_active'] });
-    const buttonEdit = el('button', { type: 'button', class: ['popup__button','popup__edit-button'] }, 'Редактировать');
-    const buttonDel = el('button', { type: 'button', class: ['popup__button','popup__delete-button'] }, 'Удалить');
-    setChildren(popup, [buttonEdit, buttonDel]);
-    return popup;
+    this.popup = el('div');
+    this.popup.className = 'popup popup_active';
+    this.buttonEdit = el('button', { type: 'button', }, 'Редактировать');
+    this.buttonEdit.className = 'popup__button popup__edit-button';
+    this.buttonDel = el('button', { type: 'button' }, 'Удалить');
+    this.buttonDel.className = 'popup__button popup__delete-button';
+    setChildren(this.popup, [this.buttonEdit, this.buttonDel]);
+    return this.popup;
+  }
+
+  bindListeners() {
+    this.buttonDefault.addEventListener('click', ({ target }) => {
+      const imp = ['default', 'important', 'so-so']
+      this.count += 1;
+      if (this.count >= imp.length) {
+        this.count = 0
+      }
+      for (let i = 0; i < imp.length; i++) {
+        if (this.count === i) {
+          target.classList.add(imp[i])
+        } else {
+          target.classList.remove(imp[i])
+        }
+      }
+    });
+
+    this.taskForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      let task = '';
+      const imp = document.querySelector('.button-importance');
+      if (imp.classList.contains('important')) {
+        task = new ImportantTask(this.taskForm["task-name"].value);
+      }
+      else if (imp.classList.contains('so-so')) {
+        task = new UnimportantTask(this.taskForm["task-name"].value);
+      }
+      else {
+        task = new StandardTask(this.taskForm["task-name"].value);
+      }
+      this.#tasks.push(task);
+      this.taskForm.reset();
+      
+      mount(this.tasksList, this.addTasksItem(`tasks__item ${task.getImportance()}`, task.getCount(), task.getText()));
+    });
   }
 
   render() {
@@ -96,8 +135,8 @@ addManualItem(text)
 }
 
 
-//const tomato = new Tomato();
-//const controllerTomato = new ControllerTomato(tomato);
+//this.tomato = new Tomato();
+//this.controllerTomato = new ControllerTomato(tomato);
 
-//const renderTomato = new RenderTomato(document.getElementById('main')/*, controllerTomato*/);
+//this.renderTomato = new RenderTomato(document.getElementById('main')/*, controllerTomato*/);
 //renderTomato.render();

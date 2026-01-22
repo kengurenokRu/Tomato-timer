@@ -25,6 +25,10 @@ class Task {
     setText(newText) {
         this.text = newText;
     }
+
+    getText() {
+        return this.text;
+    }
 }
 
 export class ImportantTask extends Task {
@@ -39,7 +43,7 @@ export class ImportantTask extends Task {
 };
 
 export class StandardTask extends Task {
-    importance = 'standard';
+    importance = 'default';
     constructor(text, count = 0) {
         super(text, count);
     }
