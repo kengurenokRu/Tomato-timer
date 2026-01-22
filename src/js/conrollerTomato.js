@@ -28,7 +28,7 @@ export class ControllerTomato {
     }
 
     handleFindTask(id) {
-        return this.tomato.findTask();
+        return this.tomato.findTask(id);
     }
 
     handleStart() {

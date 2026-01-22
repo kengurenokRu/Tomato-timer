@@ -54,7 +54,7 @@ export class StandardTask extends Task {
 };
 
 export class UnimportantTask extends Task {
-    importance = 'unimportant';
+    importance = 'so-so';
     constructor(text, count = 0) {
         super(text, count);
     }

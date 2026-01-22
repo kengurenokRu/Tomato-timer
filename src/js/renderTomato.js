@@ -2,7 +2,6 @@ import { el, setChildren, mount } from "redom";
 import { ImportantTask, StandardTask, UnimportantTask } from "./task";
 
 export class RenderTomato {
-  #tasks = [];
   constructor(root, controller) {
     this.root = root;
     this.controller = controller;
@@ -41,9 +40,9 @@ export class RenderTomato {
     this.tasks = el('.tasks');
     this.tasksTitle = el('p.tasks__title', 'Задачи:');
     this.tasksList = el('ul.tasks__list');
-    setChildren(this.tasksList, [this.addTasksItem('tasks__item important', '1', 'Сверстать сайт'),
+    /*setChildren(this.tasksList, [this.addTasksItem('tasks__item important', '1', 'Сверстать сайт'),
     this.addTasksItem('tasks__item so-so', '1', 'Оплатить налоги'),
-    this.addTasksItem('tasks__item default', '3', 'Проверить валидность')]);
+    this.addTasksItem('tasks__item default', '3', 'Проверить валидность')]);*/
     this.tasksDeadline = el('p.tasks__deadline', '1\u00A0час 30\u00A0мин');
     setChildren(this.tasks, this.tasksTitle, this.tasksList, this.tasksDeadline);
 
@@ -71,14 +70,14 @@ export class RenderTomato {
     this.bindListeners();
   }
 
-  addTasksItem(classList, count, text) {
-    this.tasksItem = el('li');
+  addTasksItem(classList, count, text, id) {
+    this.tasksItem = el('li', { id: id });
     this.tasksItem.className = classList;
     this.countNumber = el('span.count-number', count);
     this.button = el('button', { type: 'button' }, text);
     this.button.className = 'tasks__text tasks__text_active';
     this.taskBbutton = el('button.tasks__button', { type: 'button' });
-    setChildren(this.tasksItem, [this.countNumber, this.button, this.taskBbutton/*, this.addPopup()*/]);
+    setChildren(this.tasksItem, [this.countNumber, this.button, this.taskBbutton]);
     return this.tasksItem;
   }
 
@@ -92,6 +91,15 @@ export class RenderTomato {
     setChildren(this.popup, [this.buttonEdit, this.buttonDel]);
     return this.popup;
   }
+
+  renderTask(task) {
+    mount(this.tasksList, this.addTasksItem(`tasks__item ${task.getImportance()}`, task.getCount(), task.getText(), task.getId()));
+  };
+
+  renderActiveTask(task) {
+    this.windowPanelTitle.textContent = task.getText();
+    this.windowPanelTaskText.textContent = `Томат ${task.getCount()}`;    
+  };
 
   bindListeners() {
     this.buttonDefault.addEventListener('click', ({ target }) => {
@@ -122,10 +130,17 @@ export class RenderTomato {
       else {
         task = new StandardTask(this.taskForm["task-name"].value);
       }
-      this.#tasks.push(task);
+      this.controller.handleAddTask(task);
       this.taskForm.reset();
-      
-      mount(this.tasksList, this.addTasksItem(`tasks__item ${task.getImportance()}`, task.getCount(), task.getText()));
+
+      this.renderTask(task);
+    });
+
+    this.tasksList.addEventListener('click', (event) => {
+      const id = event.target.closest('.tasks__item').id;
+      this.controller.handleAddActiveTask(id);
+      const task = this.controller.handleFindTask(id);
+      this.renderActiveTask(task);
     });
   }
 
