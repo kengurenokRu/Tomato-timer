@@ -3,8 +3,12 @@ export class ControllerTomato {
         this.tomato = tomato;
     }
 
-    handleGetTime() {
+   /* handleGetTime() {
         return this.tomato.getTime();
+    }*/
+
+    handleGetTimeString() {
+        return this.tomato.getTimeString();
     }
 
     handleGetPause() {
@@ -27,12 +31,20 @@ export class ControllerTomato {
         return this.tomato.addActiveTask(id);
     }
 
+    handleGetActiveTask() {
+    return this.tomato.getActiveTasks();
+    }
+
     handleFindTask(id) {
         return this.tomato.findTask(id);
     }
 
-    handleStart() {
-        return this.tomato.start();
+    handleStart(timer) {
+        return this.tomato.start(timer);
+    }
+
+    handleStop() {
+        return this.tomato.stop();
     }
 
     handleIncreaseСounter(id) {

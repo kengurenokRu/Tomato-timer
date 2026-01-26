@@ -11,15 +11,15 @@ export class RenderTomato {
     this.window = el('div.pomodoro-form', { class: 'window' });
 
     this.windowPanel = el('.window__panel');
-    this.windowPanelTitle = el('p.window__panel-title', 'Сверстать сайт');
-    this.windowPanelTaskText = el('p.window__panel-task-text', 'Томат 2');
+    this.windowPanelTitle = el('p.window__panel-title');
+    this.windowPanelTaskText = el('p.window__panel-task-text');
     setChildren(this.windowPanel, [this.windowPanelTitle, this.windowPanelTaskText]);
 
     this.windowBody = el('.window__body');
-    this.windowTimerText = el('p.window__timer-text', '25:00');
+    this.windowTimerText = el('p.window__timer-text', '00:00');
     this.windowButtons = el('.window__buttons');
     this.buttonPrimary = el('button.button', { class: 'button-primary' }, 'Старт');
-    this.buttonSecondary = el('button');
+    this.buttonSecondary = el('button', 'Стоп');
     this.buttonSecondary.className = 'button button-secondary hidden';
     setChildren(this.windowButtons, [this.buttonPrimary, this.buttonSecondary]);
     setChildren(this.windowBody, [this.windowTimerText, this.windowButtons]);
@@ -98,7 +98,8 @@ export class RenderTomato {
 
   renderActiveTask(task) {
     this.windowPanelTitle.textContent = task.getText();
-    this.windowPanelTaskText.textContent = `Томат ${task.getCount()}`;    
+    this.windowPanelTaskText.textContent = `Томат ${task.getCount()}`;
+    this.windowTimerText.textContent = this.controller.handleGetTimeString();
   };
 
   bindListeners() {
@@ -142,6 +143,21 @@ export class RenderTomato {
       const task = this.controller.handleFindTask(id);
       this.renderActiveTask(task);
     });
+
+    this.buttonPrimary.addEventListener('click', (event) => {
+      if (this.controller.handleStart(this.windowTimerText)) {
+      this.buttonSecondary.classList.toggle('hidden');
+      this.buttonPrimary.classList.toggle('hidden'); 
+      }
+    });
+
+    this.buttonSecondary.addEventListener('click', (event) => {
+      if (this.controller.handleStop())  {
+      this.buttonSecondary.classList.toggle('hidden');
+      this.buttonPrimary.classList.toggle('hidden'); 
+      }
+    });
+
   }
 
   render() {

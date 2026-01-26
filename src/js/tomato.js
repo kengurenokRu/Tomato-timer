@@ -2,11 +2,17 @@ export const Tomato = (() => {
     let _instance;
 
     class Tomato {
-        #time = 25;
+        #time = 0.5;
         #activeTask = null;
-        #pause = 5;
-        #bigPause = 15;
+        #pause = 0.1;
+        #bigPause = 0.3;
         #tasks = [];
+        #timerId;
+        #miniTimerId;
+        #bigTimerId;
+        #timer;
+        #deadline;
+        #idTimer;
 
         constructor(fields) {
             if (_instance) return _instance;
@@ -36,12 +42,17 @@ export const Tomato = (() => {
             return JSON.stringify(this.#tasks);
         }
 
+        getActiveTasks() {
+            return this.#activeTask;
+        }
+
         addTask(task) {
             this.#tasks.push(task);
         }
 
         addActiveTask(id) {
             this.#activeTask = id;
+            this.#deadline = this.#time * 60 * 1000;
         }
 
         findTask(id) {
@@ -50,30 +61,85 @@ export const Tomato = (() => {
             return null;
         }
 
-        start() {
+        getTimeString() {
+            const time = this.getTime(this.#time * 60 * 1000);
+            return `${time.minutes.toString().padStart(2, '0')}:${time.seconds.toString().padStart(2, '0')}`;
+        }
+
+        getTime = (timeText = null) => {
+            let time;
+            if (!timeText)
+                time = this.#deadline;
+            else
+                time = timeText;
+            this.#deadline -= 1000;
+            const seconds = Math.floor(time / 1000 % 60);
+            const minutes = Math.floor(time / (1000 * 60) % 60);
+            return { time, minutes, seconds };
+        };
+
+        startTimer = () => {
+            const time = this.getTime(this.#deadline);
+            this.#idTimer = setTimeout(this.startTimer, 1000);            
+            if (time.time < 0) {
+                clearTimeout(this.#idTimer);
+            } else
+                this.#timer.textContent = `${time.minutes.toString().padStart(2, '0')}:${time.seconds.toString().padStart(2, '0')}`;
+        }
+
+        start(timer = null) {
             if (this.#activeTask) {
-                const timerId = setTimeout(() => {
-                    clearTimeout(timerId);
-                    console.log('Таймер задачи завершен');
+                if (timer)
+                this.#timer = timer;   
+                this.startTimer();
+                this.#timerId = setTimeout(() => {
+                    clearTimeout(this.#timerId);
+                    console.log('Таймер задачи завершен');                    
+                    clearTimeout(this.#idTimer);
                     this.increaseСounter(this.#activeTask);
                     const task = this.findTask(this.#activeTask);
-                    console.log(task);
-                    if (task.getCounter() % 3 === 0) {
-                        const bigTimerId = setTimeout(() => {
-                            console.log('Большой таймер отдыха');
-                            clearTimeout(bigTimerId);
-                        }, this.#tasks.bigPause * 1000);
+                    if (task.getCount() % 3 === 0) {
+                        this.#deadline = this.#bigPause * 60 * 1000;
+                        this.startTimer();
+                        this.#bigTimerId = setTimeout(() => {
+                            console.log('Большой таймер отдыха');                            
+                            clearTimeout(this.#bigTimerId);
+                            clearTimeout(this.#idTimer);
+                            this.#deadline = this.#time * 60 * 1000;
+                            this.start();
+                        }, this.#bigPause * 60 * 1000);
                     }
                     else {
-                        const miniTimerId = setTimeout(() => {
-                            console.log('Маленький таймер отдыха');
-                            clearTimeout(miniTimerId);
-                        }, this.#tasks.pause * 1000);
+                        this.#deadline = this.#pause * 60 * 1000;
+                        this.startTimer();
+                        this.#miniTimerId = setTimeout(() => {
+                            console.log('Маленький таймер отдыха завершен');                            
+                            clearTimeout(this.#miniTimerId);
+                            clearTimeout(this.#idTimer);
+                            this.#deadline = this.#time * 60 * 1000;
+                            this.start();
+                        }, this.#pause * 60 * 1000);
                     }
-                }, this.#time * 1000);
+                }, this.#time * 60 * 1000);
+                return true;
             }
             else {
                 console.error("Нет активной задачи");
+                return false;
+            }
+        }
+
+        stop() {
+            if (this.#activeTask) {
+                clearTimeout(this.#miniTimerId);
+                clearTimeout(this.#miniTimerId);
+                clearTimeout(this.#bigTimerId);
+                clearTimeout(this.#idTimer);
+                return true;
+            }
+            else {
+                console.error("Нет активной задачи");
+                return false;
             }
         }
 
